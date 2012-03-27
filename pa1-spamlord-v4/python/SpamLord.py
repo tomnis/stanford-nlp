@@ -10,6 +10,8 @@ pat2 = '(' + block + ')\s*WHERE\s*(' + block + ')\s*DOM\s*edu'
 pat3 = '(' + block + ')\s*at\s*(' + block + ')\s*dot\s*edu'
 
 
+phonepat1 = "(\d{3})-(\d{3})-(\d{4})"
+
 """ 
 TODO
 This function takes in a filename along with the file object (actually
@@ -48,6 +50,12 @@ def process_file(name, f):
         for m in matches:
             email = '%s@%s.edu' % m
             res.append((name,'e',email))
+
+        matches = re.findall(phonepat1, line)
+        for m in matches:
+            phone = '%s-%s-%s' % m
+            res.append((name, 'p', phone))
+
     return res
 
 """
