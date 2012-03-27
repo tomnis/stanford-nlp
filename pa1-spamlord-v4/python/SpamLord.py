@@ -6,7 +6,7 @@ import pprint
 block = '([\w\-]+(?:(?:\.|dot)[\w\-]+)*)'
 
 mailpat1 = block + '\s*@\s*' + block + '.edu'
-mailpat2 = block + '\s*WHERE\s*' + block + '\s*DOM\s*edu'
+mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*edu'
 mailpat3 = block + '\s*at\s*' + block + '\s*dot\s*edu'
 
 mailpats = [mailpat1, mailpat2, mailpat3]
@@ -45,6 +45,7 @@ def process_file(name, f):
     # sys.stderr.write('[process_file]\tprocessing file: %s\n' % (path))
     res = []
     for line in f:
+        line = line.lower()
         for pat in mailpats:
             matches = re.findall(pat,line)
             for m in matches:
