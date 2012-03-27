@@ -7,7 +7,7 @@ block = '[\w\-]+(?:(?:\.|dot)[\w\-]+)*'
 
 my_first_pat = '(' + block + ')\s*@\s*(' + block + ').edu'
 pat2 = '(' + block + ')\s*WHERE\s*(' + block + ')\s*DOM\s*edu'
-pat3 = 'mailto:(\w+)@(\w+)?.(\w+).edu'
+pat3 = '(' + block + ')\s*at\s*(' + block + ')\s*dot\s*edu'
 
 
 """ 
@@ -44,12 +44,10 @@ def process_file(name, f):
         for m in matches:
             email = '%s@%s.edu' % m
             res.append((name,'e',email))
-        """
         matches = re.findall(pat3,line)
         for m in matches:
-            email = '%s@%s.%s.edu' % m
+            email = '%s@%s.edu' % m
             res.append((name,'e',email))
-        """
     return res
 
 """
