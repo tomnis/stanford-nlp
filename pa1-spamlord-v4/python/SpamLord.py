@@ -16,7 +16,7 @@ dig4 = '(\d{4})'
 
 phonepat1 = dig3 + "-" + dig3 + "-" + dig4
 phonepat2= "\(" + dig3 + "\)\s*" + dig3 + "-" + dig4
-phonepat3 = dig3 + "\s{1,2}" + dig3 + "\s{1,2}" + dig4
+phonepat3 = dig3 + "(?:\s{1,2}|-)" + dig3 + "(?:\s{1,2}|-)" + dig4
 phonepats = [phonepat1, phonepat2, phonepat3]
 
 """ 
