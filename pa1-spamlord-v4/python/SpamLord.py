@@ -3,17 +3,20 @@ import os
 import re
 import pprint
 
-block = '[\w\-]+(?:(?:\.|dot)[\w\-]+)*'
+block = '([\w\-]+(?:(?:\.|dot)[\w\-]+)*)'
 
-mailpat1 = '(' + block + ')\s*@\s*(' + block + ').edu'
-mailpat2 = '(' + block + ')\s*WHERE\s*(' + block + ')\s*DOM\s*edu'
-mailpat3 = '(' + block + ')\s*at\s*(' + block + ')\s*dot\s*edu'
+mailpat1 = block + '\s*@\s*' + block + '.edu'
+mailpat2 = block + '\s*WHERE\s*' + block + '\s*DOM\s*edu'
+mailpat3 = block + '\s*at\s*' + block + '\s*dot\s*edu'
 
 mailpats = [mailpat1, mailpat2, mailpat3]
 
-phonepat1 = "(\d{3})-(\d{3})-(\d{4})"
-phonepat2= "\((\d{3})\)\s*(\d{3})-(\d{4})"
-phonepat3 = "(\d{3})\s{1,2}(\d{3})\s{1,2}(\d{4})"
+dig3 = '(\d{3})'
+dig4 = '(\d{4})'
+
+phonepat1 = dig3 + "-" + dig3 + "-" + dig4
+phonepat2= "\(" + dig3 + "\)\s*" + dig3 + "-" + dig4
+phonepat3 = dig3 + "\s{1,2}" + dig3 + "\s{1,2}" + dig4
 phonepats = [phonepat1, phonepat2, phonepat3]
 
 """ 
