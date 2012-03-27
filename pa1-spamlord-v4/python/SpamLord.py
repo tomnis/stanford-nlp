@@ -5,12 +5,16 @@ import pprint
 
 block = '[\w\-]+(?:(?:\.|dot)[\w\-]+)*'
 
-my_first_pat = '(' + block + ')\s*@\s*(' + block + ').edu'
-pat2 = '(' + block + ')\s*WHERE\s*(' + block + ')\s*DOM\s*edu'
-pat3 = '(' + block + ')\s*at\s*(' + block + ')\s*dot\s*edu'
+mailpat1 = '(' + block + ')\s*@\s*(' + block + ').edu'
+mailpat2 = '(' + block + ')\s*WHERE\s*(' + block + ')\s*DOM\s*edu'
+mailpat3 = '(' + block + ')\s*at\s*(' + block + ')\s*dot\s*edu'
 
+mailpats = [mailpat1, mailpat2, mailpat3]
 
 phonepat1 = "(\d{3})-(\d{3})-(\d{4})"
+phonepat2= "\((\d{3})\)\s*(\d{3})-(\d{4})"
+phonepat3 = "(\d{3})\s{1,2}(\d{3})\s{1,2}(\d{4})"
+phonepats = [phonepat1, phonepat2, phonepat3]
 
 """ 
 TODO
@@ -38,23 +42,17 @@ def process_file(name, f):
     # sys.stderr.write('[process_file]\tprocessing file: %s\n' % (path))
     res = []
     for line in f:
-        matches = re.findall(my_first_pat,line)
-        for m in matches:
-            email = '%s@%s.edu' % m
-            res.append((name,'e',email))
-        matches = re.findall(pat2,line)
-        for m in matches:
-            email = '%s@%s.edu' % m
-            res.append((name,'e',email))
-        matches = re.findall(pat3,line)
-        for m in matches:
-            email = '%s@%s.edu' % m
-            res.append((name,'e',email))
+        for pat in mailpats:
+            matches = re.findall(pat,line)
+            for m in matches:
+                email = '%s@%s.edu' % m
+                res.append((name,'e',email))
 
-        matches = re.findall(phonepat1, line)
-        for m in matches:
-            phone = '%s-%s-%s' % m
-            res.append((name, 'p', phone))
+        for pat in phonepats:
+            matches = re.findall(pat, line)
+            for m in matches:
+                phone = '%s-%s-%s' % m
+                res.append((name, 'p', phone))
 
     return res
 
