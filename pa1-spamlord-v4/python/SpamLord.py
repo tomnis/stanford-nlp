@@ -3,10 +3,10 @@ import os
 import re
 import pprint
 
-block = '[\w\-]+(?:\.[\w\-]+)*'
+block = '[\w\-]+(?:(?:\.|dot)[\w\-]+)*'
 
 my_first_pat = '(' + block + ')\s*@\s*(' + block + ').edu'
-pat2 = 'mailto:(\w+)@(\w+).edu'
+pat2 = '(' + block + ')\s*WHERE\s*(' + block + ')\s*DOM\s*edu'
 pat3 = 'mailto:(\w+)@(\w+)?.(\w+).edu'
 
 
@@ -41,10 +41,10 @@ def process_file(name, f):
             email = '%s@%s.edu' % m
             res.append((name,'e',email))
         matches = re.findall(pat2,line)
-        """
         for m in matches:
             email = '%s@%s.edu' % m
             res.append((name,'e',email))
+        """
         matches = re.findall(pat3,line)
         for m in matches:
             email = '%s@%s.%s.edu' % m
