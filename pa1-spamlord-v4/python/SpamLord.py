@@ -8,7 +8,7 @@ domain = '(edu|com|net)'
 
 mailpat1 = block + '\s*(?:\(followed by (?:"|&ldquo;))?@\s*' + block + '\.' + domain
 mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
-mailpat3 = block + '\s*at\s*' + block + '\s*do?t\s*' + domain
+mailpat3 = block + '\s+at\s+' + block + '\s*(?:\.|do?t)\s*' + domain
 mailpat4 = '<em>' + block + '&#x40;' + block + '\.' + domain + '</em>'
 
 mailpats = [mailpat1, mailpat2, mailpat3, mailpat4]
@@ -52,7 +52,9 @@ def process_file(name, f):
             matches = re.findall(pat,line)
             for m in matches:
                 email = '%s@%s.%s' % m
-                res.append((name,'e',email))
+                print m[0]
+                if m[0] != 'server':
+                  res.append((name,'e',email))
 
         for pat in phonepats:
             matches = re.findall(pat, line)
