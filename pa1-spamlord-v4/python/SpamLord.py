@@ -54,26 +54,26 @@ def process_file(name, f):
         line = line.lower()
         mailline = string.replace(line, '-', '')
         
-        debug = False
-        #if line.find("hager") >= 0 and line.find("function") == -1:
-         # print "line we are considering: " + line
-          #debug = True
-
-        
-        
         for pat in mailpats:
             matches = re.findall(pat,mailline)
 
             for m in matches:
-                if line.find('hager') >= 0:
+                if m[1].endswith(' dot'):
                   print "we Matched!!"
                   print m
-                if m[1].endswith(' dot'):
-                  continue
+                  host = string.replace(m[1], ' dot', '.')
+                  host = string.replace(host, ' ', '')
+                  host = host[0:len(host) - 1]
+                  print host
+                  m = (m[0], host, m[2])
+                  print m
                 
-                if line.find('obfuscate') >= 0: 
+                elif line.find('obfuscate') >= 0: 
                   m = (m[2], m[0], m[1])
-                m = (m[0], string.replace(m[1], ' ', '.',), m[2])
+                
+                else:
+                  m = (m[0], string.replace(m[1], ' ', '.',), m[2])
+                
                 email = '%s@%s.%s' % m
                 if m[0] != 'server':
                   res.append((name,'e',email))
