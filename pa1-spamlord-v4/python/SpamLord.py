@@ -12,9 +12,10 @@ mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
 mailpat3 = block + '\s+at\s+' + block + '\s*(?:\.|do?t)\s*' + domain
 mailpat4 = '<em>' + block + '&#x40;' + block + '\.' + domain + '</em>'
 mailpat5 = 'email:\s+' + block + '\s+(?:at|@)\s+' + '(\w+ \w+) ' + domain
-mailpat6 = '<script> obfuscate\(\'' + block + '\.' + domain + '\',\'' + block + '\'\); </script>'
+mailpat6 = block + ' at ' +  '(\w+ \w+ \w+ \w+) ' + domain
+mailpat7 = '<script> obfuscate\(\'' + block + '\.' + domain + '\',\'' + block + '\'\); </script>'
 
-mailpats = [mailpat1, mailpat2, mailpat3, mailpat4, mailpat5, mailpat6]
+mailpats = [mailpat1, mailpat2, mailpat3, mailpat4, mailpat5, mailpat6, mailpat7]
 
 dig3 = '(\d{3})'
 dig4 = '(\d{4})'
@@ -54,26 +55,25 @@ def process_file(name, f):
         mailline = string.replace(line, '-', '')
         
         debug = False
-        if line.find("obfuscate") >= 0 and line.find("function") == -1:
-          print "line we are considering: " + line
-          print "the curent pattern: " + mailpats[5] + "\n\n"
-          debug = True
+        #if line.find("hager") >= 0 and line.find("function") == -1:
+         # print "line we are considering: " + line
+          #debug = True
 
         
         
         for pat in mailpats:
             matches = re.findall(pat,mailline)
+
             for m in matches:
+                if line.find('hager') >= 0:
+                  print "we Matched!!"
+                  print m
                 if m[1].endswith(' dot'):
                   continue
                 
                 if line.find('obfuscate') >= 0: 
                   m = (m[2], m[0], m[1])
                 m = (m[0], string.replace(m[1], ' ', '.',), m[2])
-                if debug == True:
-                  print "we matched!! " 
-                  print m
-                  print "\n\n"
                 email = '%s@%s.%s' % m
                 if m[0] != 'server':
                   res.append((name,'e',email))
