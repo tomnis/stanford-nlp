@@ -3,8 +3,8 @@ import os
 import re
 import pprint
 
-block = '([\w\-]+(?:(?:\.|dot)[\w\-]+)*)'
-domain = '(edu|com)'
+block = '([\w\-]+(?:(?:\.|do?t)[\w\-]+)*)'
+domain = '(edu|com|net)'
 
 mailpat1 = block + '\s*@\s*' + block + '\.' + domain
 mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
