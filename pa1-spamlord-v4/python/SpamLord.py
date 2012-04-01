@@ -6,7 +6,7 @@ import pprint
 block = '([\w\-]+(?:(?:\.|do?t)[\w\-]+)*)'
 domain = '(edu|com|net)'
 
-mailpat1 = block + '\s*@\s*' + block + '\.' + domain
+mailpat1 = block + '\s*(?:\(followed by &ldquo;)?@\s*' + block + '\.' + domain
 mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
 mailpat3 = block + '\s*at\s*' + block + '\s*do?t\s*' + domain
 
