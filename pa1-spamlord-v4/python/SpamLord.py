@@ -9,8 +9,9 @@ domain = '(edu|com|net)'
 mailpat1 = block + '\s*(?:\(followed by (?:"|&ldquo;))?@\s*' + block + '\.' + domain
 mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
 mailpat3 = block + '\s*at\s*' + block + '\s*do?t\s*' + domain
+mailpat4 = '<em>' + block + '&#x40;' + block + '\.' + domain + '</em>'
 
-mailpats = [mailpat1, mailpat2, mailpat3]
+mailpats = [mailpat1, mailpat2, mailpat3, mailpat4]
 
 dig3 = '(\d{3})'
 dig4 = '(\d{4})'
