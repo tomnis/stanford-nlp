@@ -2,6 +2,7 @@ import sys
 import os
 import re
 import pprint
+import string
 
 block = '([\w\-]+(?:(?:\.|do?t)[\w\-]+)*)'
 domain = '(edu|com|net)'
@@ -10,8 +11,9 @@ mailpat1 = block + '\s*(?:\(followed by (?:"|&ldquo;))?@\s*' + block + '\.' + do
 mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
 mailpat3 = block + '\s+at\s+' + block + '\s*(?:\.|do?t)\s*' + domain
 mailpat4 = '<em>' + block + '&#x40;' + block + '\.' + domain + '</em>'
+mailpat5 = 'email:\s+' + block + '\s+(?:at|@)\s+' + '(\w+ \w+) ' + domain
 
-mailpats = [mailpat1, mailpat2, mailpat3, mailpat4]
+mailpats = [mailpat1, mailpat2, mailpat3, mailpat4, mailpat5]
 
 dig3 = '(\d{3})'
 dig4 = '(\d{4})'
@@ -51,8 +53,12 @@ def process_file(name, f):
         for pat in mailpats:
             matches = re.findall(pat,line)
             for m in matches:
+                print m
+                if m[1].endswith(' dot'):
+                  continue
+                m = (m[0], string.replace(m[1], ' ', '.',), m[2])
+                print m
                 email = '%s@%s.%s' % m
-                print m[0]
                 if m[0] != 'server':
                   res.append((name,'e',email))
 
