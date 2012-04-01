@@ -4,12 +4,12 @@ import re
 import pprint
 import string
 
-block = '([\w\-]+(?:(?:\.|do?t)[\w\-]+)*)'
+block = '([\w\-]+(?:(?:\.|do?t|;)[\w\-]+)*)'
 domain = '(edu|com|net)'
 
 mailpat1 = block + '\s*(?:\(followed by (?:"|&ldquo;))?@\s*' + block + '\.' + domain
 mailpat2 = block + '\s*where\s*' + block + '\s*dom\s*' + domain
-mailpat3 = block + '\s+at\s+' + block + '\s*(?:\.|do?t)\s*' + domain
+mailpat3 = block + '\s+at\s+' + block + '\s*(?:\.|do?t|;)\s*' + domain
 mailpat4 = '<em>' + block + '&#x40;' + block + '\.' + domain + '</em>'
 mailpat5 = 'email:\s+' + block + '\s+(?:at|@)\s+' + '(\w+ \w+) ' + domain
 mailpat6 = block + ' at ' +  '(\w+ \w+ \w+ \w+) ' + domain
@@ -52,6 +52,7 @@ def process_file(name, f):
     res = []
     for line in f:
         line = line.lower()
+        line  = string.replace(line, 'lt;', '')
         mailline = string.replace(line, '-', '')
         
         for pat in mailpats:
@@ -73,6 +74,7 @@ def process_file(name, f):
                 
                 else:
                   m = (m[0], string.replace(m[1], ' ', '.',), m[2])
+                  m = (m[0], string.replace(m[1], ';', '.'), m[2])
                 
                 email = '%s@%s.%s' % m
                 if m[0] != 'server':
