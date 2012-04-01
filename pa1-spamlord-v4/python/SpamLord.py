@@ -50,8 +50,9 @@ def process_file(name, f):
     res = []
     for line in f:
         line = line.lower()
+        mailline = string.replace(line, '-', '')
         for pat in mailpats:
-            matches = re.findall(pat,line)
+            matches = re.findall(pat,mailline)
             for m in matches:
                 print m
                 if m[1].endswith(' dot'):
