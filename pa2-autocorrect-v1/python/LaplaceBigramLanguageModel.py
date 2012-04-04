@@ -12,8 +12,13 @@ class LaplaceBigramLanguageModel:
     self.bicounts = {}
     # map bigrams to their probabilities
     self.probs = {}
-    self.train(corpus)
-  
+    if isinstance (corpus, list):
+      self.smoothval = 0
+      self.train(corpus[0])
+    else:
+      self.smoothval = 1
+      self.train(corpus)
+
   # track the raw counts of unigrams (necessary for conditional probability)
   def update_unicount(self, word):
     if word in self.unicounts:
@@ -28,8 +33,12 @@ class LaplaceBigramLanguageModel:
     else:
       self.bicounts[(word1, word2)] = 1
 
+  # simply return the number of times we observed this tuple in the corpus
+  def get_bicount(self, (word1, word2)):
+    return self.bicounts[(word1, word2)] if (word1, word2) in self.bicounts else 0
+
   # use the raw counts to compute add-1 smoothed unigram probabilities
-  def compute_smoothed_probs(self):
+  def compute_probs(self):
     for (word1, word2) in self.bicounts:
       #print (word1, word2)
       prob = self.normalize((word1, word2))
@@ -39,10 +48,10 @@ class LaplaceBigramLanguageModel:
   # P(word2 | word1) = (count((word1, word2)) + 1) / (count(word1) + |vocabulary|)
   def normalize(self, (word1, word2)):
     # how many times did we see <word1 word2>?
-    w1w2count = self.bicounts[(word1, word2)] if (word1, word2) in self.bicounts else 0
+    w1w2count = self.get_bicount((word1, word2))
     # how many times did we see word1?
     w1count = self.unicounts[word1] if word1 in self.unicounts else 0
-    return (w1w2count + 1.0) / (w1count + len(self.unicounts))
+    return (w1w2count + self.smoothval) * 1.0 / (w1count + len(self.unicounts))
 
   # should treat a (word1, word2) not in the corpus as if it was seen once
   # P(word2 | word1) = count((word1, word2)) / count(word1)
@@ -76,7 +85,7 @@ class LaplaceBigramLanguageModel:
         self.update_bicount((word1, word2))
         word1 = word2
 
-    self.compute_smoothed_probs()
+    self.compute_probs()
 
   def score(self, sentence):
     """ Takes a list of strings as argument and returns the log-probability of the 

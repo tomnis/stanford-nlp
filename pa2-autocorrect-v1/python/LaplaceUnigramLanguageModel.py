@@ -9,7 +9,12 @@ class LaplaceUnigramLanguageModel:
     self.counts = {}
     # map words to their unigram probabilities
     self.probs = {}
-    self.train(corpus)
+    if isinstance(corpus, list):
+      self.smoothval = 0
+      self.train(corpus[0])
+    else:
+      self.smoothval = 1
+      self.train(corpus)
 
   # track the raw counts of unigrams
   def update_count(self, word):
@@ -18,18 +23,21 @@ class LaplaceUnigramLanguageModel:
     else:
       self.counts[word] = 1
 
+  # simply return the number of times we observed word in the corpus
+  def get_count(self, word):
+    return self.counts[word] if word in self.counts else 0
+
   # use the raw counts to compute add-1 smoothed unigram probabilities
-  def smooth(self):
+  def compute_probs(self):
     for word in self.counts:
-      self.probs[word] = (self.counts[word] + 1.0) / len(self.words)
+      self.probs[word] = self.normalize(word)
+
+  def normalize(self, word):
+    return (self.get_count(word) + self.smoothval) * 1.0 / len(self.words)
 
   # should treat a word not in the corpus as if it was seen once
   def get_prob(self, word):
-    if word in self.probs:
-      return self.probs[word]
-    else:
-      self.probs[word] = 1.0 / len(self.words)
-      return 1.0 / len(self.words)
+    return self.probs[word] if word in self.probs else self.normalize(word)
 
   def train(self, corpus):
     """ Takes a corpus and trains your language model. 
@@ -41,7 +49,7 @@ class LaplaceUnigramLanguageModel:
         self.words.add(word)
         self.update_count(word)
     
-    self.smooth()
+    self.compute_probs()
     
   def score(self, sentence):
     """ Takes a list of strings as argument and returns the log-probability of the 
