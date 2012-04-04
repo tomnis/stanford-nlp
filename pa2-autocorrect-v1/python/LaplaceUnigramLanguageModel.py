@@ -25,7 +25,11 @@ class LaplaceUnigramLanguageModel:
 
   # should treat a word not in the corpus as if it was seen once
   def get_prob(self, word):
-    return self.probs[word] if word in self.probs else 1.0 / len(self.words)
+    if word in self.probs:
+      return self.probs[word]
+    else:
+      self.probs[word] = 1.0 / len(self.words)
+      return 1.0 / len(self.words)
 
   def train(self, corpus):
     """ Takes a corpus and trains your language model. 
