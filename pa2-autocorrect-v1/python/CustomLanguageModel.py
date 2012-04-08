@@ -64,7 +64,8 @@ class CustomLanguageModel:
         self.update_count(word)
 
     self.compute_metacounts()
-    print self.metacounts
+    for key in sorted(self.metacounts.keys()):
+        print "f(%d) = %d" % (key, self.metacounts[key])
     self.compute_probs()
 
   def score(self, sentence):
