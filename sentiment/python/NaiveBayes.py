@@ -62,8 +62,12 @@ class NaiveBayes:
 
   # compute P(d|c)P(c)
   def compute_label_prob(self, words, klass):
-    l = [self.compute_singleprob(klass, w) for w in words ]
-    return reduce(lambda x,y: x * y, l) * (self.klass_counts[klass] / sum(self.klass_counts.values()))
+    l = []
+    for word in words:
+      if self.FILTER_STOP_WORDS and word in self.stopList:
+        continue
+      l.append(math.log(self.compute_singleprob(klass,word)))
+    return sum(l) + math.log(1.0 * self.klass_counts[klass] / sum(self.klass_counts.values()))
     
   # compute P(w|klass)
   def compute_singleprob(self, klass, w):
@@ -77,14 +81,11 @@ class NaiveBayes:
     """ TODO
       'words' is a list of words to classify. Return 'pos' or 'neg' classification.
     """
-    max_prob = 0.0
-    max_klass = 'pos'
+    max_prob = -sys.maxint * 1.0
+    max_klass = random.choice(self.klass_counts.keys())
     for klass in self.klass_counts.keys():
       prob = self.compute_label_prob(words, klass)
-      # break a tie randomly
-      print prob
       if prob > max_prob:
-        print prob
         max_prob = prob
         max_klass = klass
     
@@ -101,8 +102,10 @@ class NaiveBayes:
      * Returns nothing
     """
     self.inc_klass_count(klass)
-    self.inc_klass_wcount(klass, len(words))
     for word in words:
+      if self.FILTER_STOP_WORDS and word in self.stopList:
+        continue
+      self.inc_klass_wcount(klass, 1)
       self.inc_word_count(word, klass)
       self.words.add(word)
       
