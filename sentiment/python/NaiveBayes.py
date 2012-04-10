@@ -16,6 +16,7 @@ import sys
 import getopt
 import os
 import math
+import random
 
 class NaiveBayes:
   class TrainSplit:
@@ -39,8 +40,14 @@ class NaiveBayes:
     self.FILTER_STOP_WORDS = False
     self.stopList = set(self.readFile('../data/english.stop'))
     self.numFolds = 10
+    # track the number of times we see each class, used to compute P(c)
     self.klass_counts = {}
-    self.word_counts = {}{}
+    # track the number of words we see in each class
+    self.klass_wcounts = {}
+    # track the specific word counts within each class
+    self.priors = {}
+    # track the vocabulary itself
+    self.words = set([])
 
   #############################################################################
   # TODO TODO TODO TODO TODO 
@@ -48,26 +55,40 @@ class NaiveBayes:
     self.klass_counts[klass] = self.klass_counts[klass] + 1 if klass in self.klass_counts else 1
 
   def inc_word_count(self, word, klass):
-    if klass not in self.klass_counts:
-      self.klass_counts = []
-    self.word_counts[klass][word] = self.word_counts[klass][word] + 1 if word in self.word_counts[klass] else 1 
+    self.priors[(word, klass)] = self.priors[(word, klass)] + 1 if (word, klass) in self.priors else 1
+
+  def inc_klass_wcount(self, klass, num_words):
+    self.klass_wcounts[klass] = self.klass_wcounts[klass] + num_words if klass in self.klass_wcounts else num_words
 
   # compute P(d|c)P(c)
-  def compute_prob(self, words, klass):
+  def compute_label_prob(self, words, klass):
+    l = [self.compute_singleprob(klass, w) for w in words ]
+    return reduce(lambda x,y: x * y, l) * (self.klass_counts[klass] / sum(self.klass_counts.values()))
     
+  # compute P(w|klass)
+  def compute_singleprob(self, klass, w):
+    c = self.priors[(w, klass)] if (w, klass) in self.priors else 0
+    p = 1.0 * (c + 1) / (self.klass_wcounts[klass] + len(self.words))
+    assert(p > 0.0 and p <= 1.0)
+    #print p
+    return p
   
   def classify(self, words):
     """ TODO
       'words' is a list of words to classify. Return 'pos' or 'neg' classification.
     """
-    max_prob = 0
-    max_klass = ""
-    for klass in klass_counts.keys():
-      prob = self.compute_prob(words, klass)
+    max_prob = 0.0
+    max_klass = 'pos'
+    for klass in self.klass_counts.keys():
+      prob = self.compute_label_prob(words, klass)
+      # break a tie randomly
+      print prob
       if prob > max_prob:
+        print prob
         max_prob = prob
         max_klass = klass
-    return klass
+    
+    return max_klass
   
 
   def addExample(self, klass, words):
@@ -80,8 +101,10 @@ class NaiveBayes:
      * Returns nothing
     """
     self.inc_klass_count(klass)
+    self.inc_klass_wcount(klass, len(words))
     for word in words:
       self.inc_word_count(word, klass)
+      self.words.add(word)
       
 
   # TODO TODO TODO TODO TODO 
